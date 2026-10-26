@@ -47,16 +47,25 @@ def glyph_full(cr, cx, cy):
     cr.stroke()
 
 
-GLYPHS = {"region": glyph_region, "window": glyph_window, "full": glyph_full}
+def glyph_batch(cr, cx, cy):
+    cr.rectangle(cx - 6, cy - 11, 22, 16)
+    cr.stroke()
+    cr.rectangle(cx - 16, cy - 5, 22, 16)
+    cr.stroke()
+
+
+GLYPHS = {"region": glyph_region, "window": glyph_window, "full": glyph_full, "batch": glyph_batch}
 
 
 class Overlay(Gtk.Window):
-    def __init__(self, shot, on_done):
+    def __init__(self, shot, on_done, batch_count=0):
         super().__init__(type=Gtk.WindowType.POPUP)
         self.shot = shot
         self.on_done = on_done
         self.blur = make_blur(shot)
         self.items = [i for i in ITEMS if i[0] != "window" or shot.active_rect]
+        if batch_count:
+            self.items.append(("batch", f"Batch ({batch_count})"))
         self.index = 0
         self.menu_visible = True
         self.menu_dismissed = False
@@ -144,6 +153,8 @@ class Overlay(Gtk.Window):
             self.menu_dismissed = True
             self.set_cursor("crosshair")
             self.queue_draw()
+        elif kind == "batch":
+            self.finish("batch")
         elif kind == "window":
             self.finish(self.shot.active_rect)
         else:

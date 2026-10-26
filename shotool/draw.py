@@ -12,16 +12,19 @@ def rounded_rect(cr, x, y, w, h, r):
     cr.close_path()
 
 
-def text_width(cr, text, size):
-    cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+def text_width(cr, text, size, bold=False):
+    weight = cairo.FONT_WEIGHT_BOLD if bold else cairo.FONT_WEIGHT_NORMAL
+    cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, weight)
     cr.set_font_size(size)
     return cr.text_extents(text).x_advance
 
 
-def draw_text(cr, text, x, y, size, alpha=1.0, center=False):
-    width = text_width(cr, text, size)
+def draw_text(cr, text, x, y, size, alpha=1.0, center=False, right=False, bold=False):
+    width = text_width(cr, text, size, bold)
     if center:
         x -= width / 2
+    elif right:
+        x -= width
     cr.move_to(x, y)
     cr.set_source_rgba(1, 1, 1, alpha)
     cr.show_text(text)

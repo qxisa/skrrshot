@@ -20,6 +20,16 @@ def save(data):
         json.dump(data, handle, indent=2)
 
 
+def get(key, default=None):
+    return load().get(key, default)
+
+
+def put(**values):
+    data = load()
+    data.update(values)
+    save(data)
+
+
 def clear():
     try:
         os.remove(PATH)
@@ -28,4 +38,4 @@ def clear():
 
 
 def hotkey():
-    return load().get("hotkey", DEFAULT_HOTKEY)
+    return get("hotkey", DEFAULT_HOTKEY)
